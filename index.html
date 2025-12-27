@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Φόρμα Επικοινωνίας</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: transparent; 
@@ -41,8 +39,7 @@
             text-align: center;
             font-size: 22px;
         }
-        .contact-form input, 
-        .contact-form textarea {
+        .contact-form input, .contact-form textarea {
             width: 100%;
             margin-bottom: 15px;
             padding: 12px;
@@ -52,8 +49,7 @@
             outline: none;
             transition: border-color 0.3s;
         }
-        .contact-form input:focus, 
-        .contact-form textarea:focus {
+        .contact-form input:focus, .contact-form textarea:focus {
             border-color: #0078d7;
         }
         .contact-form button {
@@ -68,9 +64,8 @@
             font-weight: bold;
             transition: background 0.3s;
         }
-        .contact-form button:hover {
-            background-color: #005a9e;
-        }
+        .contact-form button:hover { background-color: #005a9e; }
+        .contact-form button:disabled { background-color: #ccc; }
     </style>
 </head>
 <body>
@@ -82,29 +77,66 @@
         Εργαστήριο Τηλεπισκόπησης, Πανεπιστήμιο Αιγαίου
     </div>
 
-    <h2>Επικοινωνία</h2>
-        
-    <form action="https://formsubmit.co/98acfeccd0ce52724c06f256835ebe4c" method="POST">
-        
-        <input type="text" name="_honey" style="display:none">
+    <div id="form-content">
+        <h2>Επικοινωνία</h2>
+        <form id="my-form" action="https://formsubmit.co/ajax/98acfeccd0ce52724c06f256835ebe4c" method="POST">
+            <input type="text" name="_honey" style="display:none">
+            <input type="text" name="name" placeholder="Ονοματεπώνυμο" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" rows="4" placeholder="Το μήνυμά σας..." required></textarea>
+            
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            
+            <button type="submit" id="submit-btn">Αποστολή</button>
+        </form>
+    </div>
 
-        <input type="text" name="name" placeholder="Ονοματεπώνυμο" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <textarea name="message" rows="4" placeholder="Το μήνυμά σας..." required></textarea>
-        
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://stzan79.github.io/contact-form/">
-
-        <button type="submit">Αποστολή</button>
-    </form>
+    <div id="success-msg" style="display:none; text-align:center; padding: 20px;">
+        <h3 style="color: #28a745;">✓ Ευχαριστούμε!</h3>
+        <p>Το μήνυμά σας στάλθηκε με επιτυχία.</p>
+    </div>
 </div>
+
+<script>
+    const form = document.getElementById('my-form');
+    const formContent = document.getElementById('form-content');
+    const successMsg = document.getElementById('success-msg');
+    const btn = document.getElementById('submit-btn');
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        btn.innerHTML = "Αποστολή...";
+        btn.disabled = true;
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch(form.action, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                formContent.style.display = 'none';
+                successMsg.style.display = 'block';
+            } else {
+                throw new Error('Σφάλμα κατά την αποστολή');
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Υπήρξε κάποιο πρόβλημα. Δοκιμάστε ξανά σε λίγο.");
+            btn.innerHTML = "Αποστολή";
+            btn.disabled = false;
+        });
+    });
+</script>
 
 </body>
 </html>
-
-
-
-
-
-
